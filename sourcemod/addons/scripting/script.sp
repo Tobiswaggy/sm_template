@@ -1,26 +1,27 @@
 #include <sourcemod>
 
-#define TARGET_WORD "word"
+#define TARGET_WORD "Word"
 
 int g_iWordCount = 0;
 
-public Action:OnClientSay(int client, char[] szText) 
+public Action OnClientSay(int client, const char[] text) 
 {
-    if (StrContains(szText, TARGET_WORD, false, true) != -1) 
+    if (StrContains(text, TARGET_WORD, false, true) != -1) 
     {
         g_iWordCount++;
-        PrintToChatAll("Word count: %d", g_iWordCount);
+        PrintToChat(client, "Word count: %d", g_iWordCount);
     }
     return Plugin_Continue;
 }
 
-public Plugin:myinfo() 
+public Action Cmd_WordCount(int client, int args) 
 {
+    PrintToChat(client, "Word count: %d", g_iWordCount);
     return Plugin_Handled;
 }
 
 public void OnPluginStart() 
 {
-    RegisterPlugin("SimpleWordCounter", "1.0", "Author");
-    HookEvent("player_say", OnClientSay);
+    HookEvent("player_say", Event_OnClientSay);
+    RegisterCommand("wordcount", "Check how many times 'Word' has been said", ADMIN_CHAT, Cmd_WordCount);
 }
